@@ -14,7 +14,7 @@ export const App: React.FC = () => {
 
   // Фільтрація списку
   const filteredPeople = peopleFromServer.filter(person =>
-    person.name.toLowerCase().includes(query.toLowerCase()),
+    person.name.toLowerCase().includes(query.trim().toLowerCase()),
   );
 
   // Перевірка чи повністю збігається ім'я
