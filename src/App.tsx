@@ -3,7 +3,7 @@ import './App.scss';
 import { peopleFromServer } from './data/people';
 
 export const App: React.FC = () => {
-  const { name, born, died } = peopleFromServer[0];
+  // const { name, born, died } = peopleFromServer[0];
   const [query, setQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<null | {
@@ -23,9 +23,27 @@ export const App: React.FC = () => {
   // );
 
   // Вибір елемента
-  const handleSelect = (selectedName: string) => {
-    setSelectedItem(selectedName);
-    setQuery(selectedName);
+  const handleSelect = (person: {
+    name: string;
+    born: number;
+    died: number;
+  }) => {
+    setSelectedItem(person);
+    setQuery(person.name);
+    setIsDropdownOpen(false);
+  };
+
+  // Функія на перевірку імені
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+
+    if (
+      !filteredPeople.some(
+        person => person.name.toLowerCase() === value.toLowerCase(),
+      )
+    ) {
+      setSelectedItem(null);
+    }
   };
 
   return (
@@ -33,7 +51,7 @@ export const App: React.FC = () => {
       <main className="section is-flex is-flex-direction-column">
         <h1 className="title" data-cy="title">
           {selectedItem
-            ? `${selectedItem} ${selectedItem.born} - ${selectedItem.died}`
+            ? `${selectedItem.name} (${selectedItem.born} - ${selectedItem.died})`
             : 'No selected person'}
         </h1>
 
@@ -46,7 +64,7 @@ export const App: React.FC = () => {
               data-cy="search-input"
               value={query}
               onFocus={() => setIsDropdownOpen(true)}
-              onChange={e => setQuery(e.target.value)}
+              onChange={e => handleQueryChange(e.target.value)}
             />
           </div>
 
@@ -61,7 +79,7 @@ export const App: React.FC = () => {
                   <div
                     className="dropdown-item"
                     data-cy="suggestion-item"
-                    onClick={() => handleSelect(person.name)}
+                    onClick={() => handleSelect(person)}
                     key={person.slug}
                   >
                     <p className="has-text-link">{person.name}</p>
